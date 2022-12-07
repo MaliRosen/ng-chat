@@ -49,9 +49,12 @@ export class AuthService {
     })
   }
   private authLogin(provider:firebase.default.auth.AuthProvider){
+    debugger;
     return this.afAuth.signInWithPopup(provider).then((res)=>{
     this.isLoggedIn$.next(true);
-    this.setUserData(res.user as unknown as User)});
+    this.setUserData(res.user as unknown as User);
+    this.router.navigate(["chat"]);
+  });
   }
 
   private setUserData(user?: User): Promise<void> | void {

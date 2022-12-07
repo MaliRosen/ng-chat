@@ -1,1 +1,13 @@
-<p>chat-container works!</p>
+<div class="chat-container">
+    <div class="room_list" *ngIf="rooms$|async as rooms"> 
+        <app-room-list [rooms]="rooms"></app-room-list>
+
+    </div>
+    <div class="chat">
+        <!-- <h1>CHAT</h1> -->
+
+    </div>
+    <div class="add_room">
+        <button mat-raised-button color="primary">Add Room</button>
+    </div>
+</div>

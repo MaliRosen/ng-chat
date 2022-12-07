@@ -6,7 +6,13 @@
     (click)="signInWithGoogle()"
     *ngIf="!(isLoggedIn$ | async)"
      >
-       <span>Login</span> 
+     <span>Login</span> 
+    </button>
+    <button mat-icon-button 
+    (click)="signOut()"
+    *ngIf="(isLoggedIn$ | async)"
+     >
+       <span>LogOut</span> 
     </button>
 <!-- <ng-tamplate #loggedOut>
     <button mat-icon-button 
@@ -16,4 +22,3 @@
 </ng-tamplate> -->
   </mat-toolbar>
 </div>
-

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { IChatRoom } from 'src/app/models';
 
 @Component({
   selector: 'app-room-list',
@@ -7,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RoomListComponent implements OnInit {
 
+  @Input() rooms:Array<IChatRoom>=[];
   constructor() { }
 
   ngOnInit(): void {
