@@ -12,7 +12,6 @@ export class AuthGuardService implements CanActivate{
   
   canActivate() {
     return this.authService.isLoggedIn().pipe(tap((userLoggedIn)=>{
-      debugger;
       console.log(userLoggedIn);
       
       if(!userLoggedIn)

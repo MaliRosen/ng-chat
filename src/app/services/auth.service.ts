@@ -5,7 +5,7 @@ import 'firebase/compat/firestore';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { User } from '../models/user.interface';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,7 @@ export class AuthService {
 // save data locally
 
   private isLoggedIn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private userDetails$: Subject<User> = new Subject<User>();
 
   constructor(private afs:AngularFirestore, private afAuth: AngularFireAuth, private router : Router) {
     const saveUserString=localStorage.getItem('user');
@@ -25,7 +26,7 @@ export class AuthService {
     }
     afAuth.authState.subscribe((user)=> {
       if(!!user){
-        debugger;
+        this.userDetails$.next(user as unknown as User)
         this.isLoggedIn$.next(true);
         const userstring : string = JSON.stringify(user);
         localStorage.setItem("user", userstring);
@@ -46,10 +47,15 @@ export class AuthService {
     return this.afAuth.signOut().then(()=>{
       localStorage.removeItem("user");
        this.router.navigate(["/"]);
+      //  this.userDetails$.next(undefined);
     })
   }
+
+  public getUserData():Observable<User>{
+    return this.userDetails$.asObservable();
+  }
   private authLogin(provider:firebase.default.auth.AuthProvider){
-    debugger;
+     ;
     return this.afAuth.signInWithPopup(provider).then((res)=>{
     this.isLoggedIn$.next(true);
     this.setUserData(res.user as unknown as User);
@@ -73,7 +79,6 @@ export class AuthService {
   }
 
   public isLoggedIn():Observable<boolean> {
-    debugger
     return this.isLoggedIn$.asObservable();
   }
 }
