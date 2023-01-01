@@ -58,8 +58,8 @@ export class AuthService {
      ;
     return this.afAuth.signInWithPopup(provider).then((res)=>{
     this.isLoggedIn$.next(true);
-    this.setUserData(res.user as unknown as User);
     this.router.navigate(["chat"]);
+    this.setUserData(res.user as unknown as User);
   });
   }
 

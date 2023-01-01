@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationEnd, Router, RouterEvent } from '@angular/router';
+import { ActivatedRoute, ActivationEnd, NavigationEnd, Router, RouterEvent } from '@angular/router';
 import { filter, Observable, Subscription } from 'rxjs';
 import { IChatRoom, IMessage } from 'src/app/models';
 import { AuthService } from 'src/app/services/auth.service';
@@ -16,6 +16,7 @@ export class ChatContainerComponent implements OnInit , OnDestroy {
 
   private subscription: Subscription = new Subscription();
   private userId:string="";
+  private roomId:string="";
   public rooms$:Observable<Array<IChatRoom>>
   public messeges$:Observable<Array<IMessage>>
   constructor(
@@ -27,9 +28,10 @@ export class ChatContainerComponent implements OnInit , OnDestroy {
     )
     { 
     this.rooms$ = this.chatService.getRooms();
-    const roomId : string= this.activatedRoute.snapshot.url[1].path;
-    this.messeges$ = this.chatService.getRoomMesseges(roomId);
-    console.log("roomId", roomId);
+    if(this.activatedRoute.snapshot.url.length>1)
+      this.roomId=this.activatedRoute.snapshot.url[1]?.path;
+    this.messeges$ = this.chatService.getRoomMesseges(this.roomId);
+    console.log("roomId", this.roomId);
 
     this.subscription.add(
       this.router.events.pipe(filter((data) => data instanceof NavigationEnd))
@@ -56,10 +58,23 @@ export class ChatContainerComponent implements OnInit , OnDestroy {
   public onAddRoom(roomName:string,userId:string){
     this.chatService.addRoom(roomName, userId);
   }
+  public sendMessege(newMessege : string){
+    if(this.roomId)
+    this.chatService.sendMessage(newMessege,this.userId,this.roomId);
+  }
   ngOnInit(): void {
     this.subscription.add(this.auth.getUserData().pipe(filter(data=>!!data)).subscribe(user=>{
       this.userId = user.uid;
     }))
+    this.subscription.add(
+      this.router.events.pipe(filter((data) => data instanceof ActivationEnd))
+       .subscribe(data=>{
+        console.log("data",data);
+        
+        const routerEvent= data as ActivationEnd
+        this.roomId= routerEvent.snapshot.paramMap.get("roomId") || "";
+       }
+       ))
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

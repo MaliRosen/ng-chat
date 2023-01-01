@@ -27,7 +27,6 @@ export class ChatService {
 
 
   public getRoomMesseges(roomId:string):Observable<Array<IMessage>>{
-    debugger;
     return this._db.collection('rooms').doc(roomId).collection('messeges').snapshotChanges().pipe(map(messeges=>{
       return messeges.map(messege=>{
         const data:IMessage = <IMessage> messege.payload.doc.data();
@@ -45,6 +44,13 @@ export class ChatService {
       roomName,
       createdUserId:userId
     })
-  
   }
+
+  public sendMessage(body:string, userId:string, roomId:string):void{
+    this._db.collection('rooms').doc(roomId).collection('messeges').add({
+      userId,
+      timestamp: new Date().getTime(),
+      body
+    })
+  }                                                                                                                                  
 }
